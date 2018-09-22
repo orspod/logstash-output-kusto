@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'logstash-output-kusto'
-  s.version       = '0.1.6'
+  s.version       = '0.1.7'
   s.licenses      = ['Apache-2.0']
   s.summary       = 'Writes events to Azure KustoDB'
   s.description   = 'This is a logstash output plugin used to write events to an Azure KustoDB instance'

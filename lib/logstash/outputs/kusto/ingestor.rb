@@ -29,7 +29,7 @@ class LogStash::Outputs::Kusto < LogStash::Outputs::Base
 
       @logger.debug('Preparing Kusto resources.')
 
-      kusto_connection_string = Java::KustoConnectionStringBuilder.createWithAadApplicationCredentials(ingest_url, app_id, app_key, app_tenant)
+      kusto_connection_string = Java::KustoConnectionStringBuilder.createWithAadApplicationCredentials(ingest_url, app_id, app_key.to_s, app_tenant)
 
       @kusto_client = Java::KustoIngestClient.new(kusto_connection_string)
 
