@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'logstash/devutils/rspec/spec_helper'
 require 'logstash/outputs/kusto'
 require 'logstash/codecs/plain'
@@ -16,13 +17,19 @@ describe LogStash::Outputs::Kusto do
   } }
 
   describe '#register' do
-    # this actually tests some the of ingestor class init procedure
 
     it 'doesnt allow the path to start with a dynamic string' do
       kusto = described_class.new(options.merge( {'path' => '/%{name}'} ))
       expect { kusto.register }.to raise_error(LogStash::ConfigurationError)
       kusto.close
     end
+
+    it 'path must include a dynamic string to allow file rotation' do
+      kusto = described_class.new(options.merge( {'path' => '/{name}'} ))
+      expect { kusto.register }.to raise_error(LogStash::ConfigurationError)
+      kusto.close
+    end
+
 
     dynamic_name_array = ['/a%{name}/', '/a %{name}/', '/a- %{name}/', '/a- %{name}']
 
@@ -42,35 +49,35 @@ describe LogStash::Outputs::Kusto do
       kusto.close
     end
 
-    context 'doesnt allow database to have some dynamic part' do
-      dynamic_name_array.each do |test_database|
-        it "with path: #{test_database}" do
-          kusto = described_class.new(options.merge( {'database' => test_database} ))
-          expect { kusto.register }.to raise_error(LogStash::ConfigurationError)
-          kusto.close
-        end
-      end
-    end
+    # context 'doesnt allow database to have some dynamic part' do
+    #   dynamic_name_array.each do |test_database|
+    #     it "with path: #{test_database}" do
+    #       kusto = described_class.new(options.merge( {'database' => test_database} ))
+    #       expect { kusto.register }.to raise_error(LogStash::ConfigurationError)
+    #       kusto.close
+    #     end
+    #   end
+    # end
 
-    context 'doesnt allow table to have some dynamic part' do
-      dynamic_name_array.each do |test_table|
-        it "with path: #{test_table}" do
-          kusto = described_class.new(options.merge( {'table' => test_table} ))
-          expect { kusto.register }.to raise_error(LogStash::ConfigurationError)
-          kusto.close
-        end
-      end
-    end
+    # context 'doesnt allow table to have some dynamic part' do
+    #   dynamic_name_array.each do |test_table|
+    #     it "with path: #{test_table}" do
+    #       kusto = described_class.new(options.merge( {'table' => test_table} ))
+    #       expect { kusto.register }.to raise_error(LogStash::ConfigurationError)
+    #       kusto.close
+    #     end
+    #   end
+    # end
 
-    context 'doesnt allow mapping to have some dynamic part' do
-      dynamic_name_array.each do |test_mapping|
-        it "with path: #{test_mapping}" do
-          kusto = described_class.new(options.merge( {'mapping' => test_mapping} ))
-          expect { kusto.register }.to raise_error(LogStash::ConfigurationError)
-          kusto.close
-        end
-      end
-    end
+    # context 'doesnt allow mapping to have some dynamic part' do
+    #   dynamic_name_array.each do |test_mapping|
+    #     it "with path: #{test_mapping}" do
+    #       kusto = described_class.new(options.merge( {'mapping' => test_mapping} ))
+    #       expect { kusto.register }.to raise_error(LogStash::ConfigurationError)
+    #       kusto.close
+    #     end
+    #   end
+    # end
 
   end
   
